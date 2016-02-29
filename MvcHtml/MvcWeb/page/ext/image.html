@@ -1,0 +1,261 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>MvcHtml</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, minimal-ui">
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <link href="/content/css/index.css" rel="stylesheet" />
+    <style>
+        .page {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0px;
+            left: 0px;
+            background: #dccbcb;
+            overflow-y: auto;
+        }
+        .e_imgs {
+            padding:0px 5px;
+            min-height:400px;
+        }
+        .e_img {
+            margin: 5px 0px;
+            height: 400px;
+            border: 1px solid #ffffff;
+            position:relative;
+            overflow:hidden;
+        }
+        .e_imgres {
+            position:absolute;
+            left:0px;
+            top:0px;
+            width:100%;
+            height:100%;
+            background-size: 100% auto;
+            background-position-y: center;
+            background-repeat: no-repeat;
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="e_imgs">
+            <!--<div class="e_img">
+                <div class="e_imgres" data-src="/content/imager/views/1.jpg"></div>
+            </div>
+            <div class="e_img">
+                <div class="e_imgres" data-src="/content/imager/views/3.jpg"></div>
+            </div>
+            <div class="e_img">
+                <div class="e_imgres" data-src="/content/imager/views/5.jpg"></div>
+            </div>
+            <div class="e_img">
+                <div class="e_imgres" data-src="/content/imager/views/7.jpg"></div>
+            </div>
+            <div class="e_img">
+                <div class="e_imgres" data-src="/content/imager/views/10.jpg"></div>
+            </div>-->
+        </div>
+    </div>
+    <script src="/lib/jquery-1.11.3.min.js"></script>
+    <script src="/content/js/jqueryext.js"></script>
+    <script src="/content/js/index.js"></script>
+    <script>
+        app.ready(function () {
+            var _controller = {
+
+                start: function () {
+                    var that = this;
+                    that.model.start();
+                    $(window).one("eimg:init", function () {
+                        that.view.start();
+                    });
+                }
+
+            }
+
+            var _model = {
+
+                setting: {
+                    maxmove: 300,
+                    minmove:300,
+                    itemheight: 0,
+                    itemwidth:0,
+                },
+
+                datas: [],
+
+                start: function () {
+                    var that = this;
+                    var setting = that.setting;
+                    var elms = $(".e_imgs");
+
+                    setting.itemheight = elms.height();
+                    setting.itemwidth = elms.width();
+
+                    
+                    that.adds(
+                        [
+                            "/content/imager/views/1.jpg",
+                            "/content/imager/views/3.jpg",
+                            "/content/imager/views/5.jpg",
+                            "/content/imager/views/7.jpg",
+                            "/content/imager/views/9.jpg",
+                            "/content/imager/views/2.jpg",
+                            "/content/imager/views/4.jpg",
+                            "/content/imager/views/6.jpg",
+                            "/content/imager/views/8.jpg",
+                            "/content/imager/views/10.jpg",
+                        ],
+                        function (datas) {
+                            $(window).trigger("eimg:init");
+                        }
+                        );
+                    //var imgonload = function (src,callback) {
+                    //    var img = new Image();
+                    //    img.src = src;
+                    //    img.onload = function () {
+                    //        callback(img);
+                    //    }
+                    //}
+
+                    //var comlen = 0;
+                    //elms.each(function () {
+                    //    var res = $(this).children(".e_imgres");
+                    //    var src = res.data("src");
+                    //    imgonload(src, function (img) {
+                    //        var number = that.datas.push({
+                    //            res: res,
+                    //            src: src,
+                    //            img: img,
+                    //            positiony: ((setting.itemwidth / img.width) * img.height - setting.itemheight) / 2,
+                    //        });
+                    //        var item = that.datas[number - 1];
+                    //        res.css({
+                    //            "background-image": "url(" + src + ")",
+                    //            "background-position-y": "-" + item.positiony + "px",
+                    //        }).data(item);
+                    //        comlen++;
+                    //        if (comlen == elms.length) {
+                    //            $(window).trigger("eimg:init");
+                    //        }
+                    //    });
+                    //});
+                },
+                
+                add: function (src,callback) {
+                    var that = this;
+                    var setting = that.setting;
+
+                    var imgonload = function (src, callback) {
+                        var img = new Image();
+                        img.src = src;
+                        img.onload = function () {
+                            callback(img);
+                        }
+                    }
+
+                    var e_img= $.create("div", {
+                        className: "e_img",
+                    });
+                    var res = $.create("div", {
+                        className: "e_imgres",
+                    });
+
+                    imgonload(src, function (img) {
+                        var number = that.datas.push({
+                            res: res,
+                            src: src,
+                            img: img,
+                            positioninit: ((setting.itemwidth / img.width) * img.height - setting.itemheight) / 2,
+                            positionmove:0,
+                        });
+                        var item = that.datas[number - 1];
+                        res.css({
+                            "background-image": "url(" + src + ")",
+                            "background-position-y": "-" + item.positioninit + "px",
+                        }).data(item);
+                        callback(item);
+                    });
+                    $(".e_imgs").append(e_img.append(res))
+                },
+
+                adds: function (srcs,callback) {
+                    var that = this;
+                    var comlen = 0;
+                    var datas = [];
+                    var itemcallback = function (data) {
+                        comlen++;
+                        datas.push(data);
+                        if (comlen == srcs.length) {
+                            callback(datas);
+                        }
+                    }
+                    for (var i = 0; i < srcs.length; i++) {
+                        var item = srcs[i];
+                        that.add(item, itemcallback);
+                    }
+                    
+                }
+            }
+
+            var _view = {
+
+                start: function () {
+                    var that = this;
+                    var model = views.model;
+                    for (var i = 0; i < model.datas.length; i++) {
+                        var item = model.datas[i];
+                        console.log(item.src);
+                    }
+
+                    $(".page").scroll(function () {
+                        that.onscroll();
+                    });
+                    
+                },
+
+                onscroll: function () {
+                    var that = this;
+                    var model = views.model;
+
+                    var scrolltop = $(".page").scrollTop();
+                    if (scrolltop >= 0) {
+                        scrolltop = scrolltop > model.setting.maxmove ? model.setting.maxmove : scrolltop;
+                    }
+                    if (scrolltop < 0) {
+                        scrolltop = scrolltop < model.setting.minmove ? model.setting.minmove : scrolltop;
+                    }
+                    for (var i = 0; i < model.datas.length; i++) {
+                        var item = model.datas[i];
+                        item.positionmove = scrolltop;
+                        item.res.css({
+                            "background-position-y": "-" + (item.positioninit + item.positionmove) + "px",
+                        });
+                    }
+                    //$(".e_imgres").css({
+                    //    "background-position-y": scrolltop * -1 + "px"
+                    //});
+                    //console.log(scrolltop);
+                },
+
+            }
+
+
+            var views = _controller;
+            views.model = _model;
+            views.view = _view;
+            views.start();
+
+            //$(".page").scroll(function () {
+            //    var scrolltop = $(".page").scrollTop();
+            //    $(".e_imgres").css({
+            //        "background-position-y": scrolltop * -1 + "px"
+            //    });
+            //    console.log(scrolltop);
+            //});
+        });
+    </script>
+</body>
+</html>

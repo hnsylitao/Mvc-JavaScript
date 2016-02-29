@@ -1,0 +1,174 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>MvcHtml</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, minimal-ui">
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <link href="/content/css/index.css" rel="stylesheet" />
+    <style>
+        .page {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0px;
+            left: 0px;
+            background: #dccbcb;
+            overflow-y: scroll;
+        }
+        .touchview_pulldown {
+            height: 40px;
+            background: #fff;
+            line-height: 40px;
+            padding: 5px 10px;
+            border-bottom: 1px solid #ccc;
+            font-weight: bold;
+            font-size: 14px;
+            color: #888;
+            margin-top: 0;
+            white-space: nowrap;
+            font-size: 14px;
+        }
+
+            .touchview_pulldown .touchview_pulldownicon {
+            
+            }
+
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="touchview_pulldown">
+            <span class="touchview_pulldownicon"></span>
+        </div>
+    </div>
+    <script src="/lib/jquery-1.11.3.min.js"></script>
+    <script src="/content/js/jqueryext.js"></script>
+    <script src="/content/js/index.js"></script>
+    <script>
+        app.ready(function () {
+
+            var _controller = {
+
+                start: function () {
+
+                },
+
+                init: function (elm,options) {
+                    var that = this;
+                    that.model.data.that = elm;
+                    $.extend(that.model.setting, options);
+                    that.view.init();
+                },
+
+            }
+
+            var _model = {
+
+                data: {
+                    that: new Object(),
+
+                },
+
+                setting: {
+
+                    touch_top: 60,
+
+                    touch_bottom:60,
+
+                    touch_top_step_1:function(){
+                        console.log("下拉中...");
+                    },
+
+                    touch_top_step_2: function () {
+                        console.log("下拉超出...");
+                    },
+
+                    touch_top_step_3: function () {
+                        console.log("停止下拉...");
+                    },
+
+                    touch_refresh: function () {
+                        console.log("数据刷新中...");
+                    },
+                },
+
+            }
+
+            var _view = {
+
+                touches: {
+                    touchestart: null,
+                    toucheend: null,
+                },
+
+                init: function () {
+                    var that = this;
+                    var model = views.model;
+                    model.data.that.bind("touchstart", this.touchstart);
+                    model.data.that.bind("touchmove", this.touchmove);
+                    model.data.that.bind("touchend", this.touchend);
+                },
+
+                touchstart: function (event) {
+                    var touches = event.originalEvent.changedTouches;
+                    var parent = views;
+                    var that = views.view;
+                    var model = views.model;
+                    var tg = model.data.that;
+
+                    that.touches.touchestart = touches[0];
+                },
+
+                touchmove: function (event) {
+                    var touches = event.originalEvent.changedTouches;
+                    var parent = views;
+                    var that = views.view;
+                    var model = views.model;
+                    var tg = model.data.that;
+
+                    var touchemove = touches[0].clientY - that.touches.touchestart.clientY;
+                    tg.css({
+                        transform: "translate(0px, " + touchemove + "px)",
+                    });
+                },
+                
+                touchend: function (event) {
+                    var touches = event.originalEvent.changedTouches;
+                    var parent = views;
+                    var that = views.view;
+                    var model = views.model;
+                    var tg = model.data.that;
+
+                    that.touches.toucheend = touches[0];
+                    tg.css({
+                        transform: "translate(0px,0px)",
+                        transition: "all 300ms"
+                    });
+                    
+                    window.setTimeout(function () {
+                        tg.css({
+                            transition: ""
+                        });
+                    }, 300);
+
+                },
+
+            }
+
+
+            var views = _controller;
+            views.model = _model;
+            views.view = _view;
+
+            $.fn.touchview = function (options) {
+                views.init($(this), options);
+            }
+           
+            $(".page").touchview();
+            //$.extend(true, app.ext.touchview, app._controller, views);
+        });
+
+        
+    </script>
+</body>
+</html>

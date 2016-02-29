@@ -1,0 +1,214 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>MvcHtml</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, minimal-ui">
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <link href="/content/css/index.css" rel="stylesheet" />
+    <style>
+        .page {
+            position:absolute;
+            width:100%;
+            height:100%;
+            top:0px;
+            left:0px;
+            background:#dccbcb;
+            overflow-y: scroll;
+        }
+        .panels {
+            padding:5px;
+            margin:0px auto;
+            height:auto;
+            display:flex;
+        }
+        .boxs {
+            flex:1;
+            margin:10px;
+            min-height:50px;
+        }
+        .box {
+            margin-bottom:10px;
+            background:#fff;
+            overflow:hidden;
+            padding:3px;
+            border-radius:3px;
+            box-shadow: 0px 5px 10px #949494;
+            position:relative;
+        }
+            .box .photo {
+                width:100%;
+            }
+            .box .content {
+                padding:5px;
+                font-size:16px;
+                color:#000;
+            }
+            .box .own {
+                padding:5px;
+                font-size:14px;
+                color:#808080;
+            }
+            .box .client {
+                top: 6px;
+                right: 6px;
+                font-size: 12px;
+                background-color: #522C2C;
+                position: absolute;
+                border-radius: 3px;
+                color: #fff;
+                padding: 0px 5px;
+            }
+                .box .client img {
+                    height:12px;
+                    margin-top:5px;
+                }
+    </style>
+</head>
+<body>
+    <div class="page">
+
+        <div class="panels" id="viewphoto">
+
+            <div class="boxs">
+
+            </div>
+
+            <div class="boxs">
+
+            </div>
+
+        </div>
+
+    </div>
+    <script src="/lib/jquery-1.11.3.min.js"></script>
+    <script src="/content/js/jqueryext.js"></script>
+    <script src="/content/js/index.js"></script>
+    <script>
+        app.ready(function () {
+
+            var _controller = {
+
+                start: function () {
+                    this.view.start();
+                }
+            }
+
+            var _model = {
+
+                id:1,
+
+                getdata: function (len) {
+                    var that=this;
+                    var obj = [];
+                    for (var i = 0; i < len; i++) {
+                        obj.push({
+                            id: that.id,
+                            path: that.getrandomimg(),
+                            content: "我是标题",
+                            own:"我是时间",
+                        });
+                        that.id++;
+                    }
+                    return obj;
+                },
+
+                getrandomimg:function(){
+                    function GetRandomNum(Min, Max) {
+                        var Range = Max - Min;
+                        var Rand = Math.random();
+                        return (Min + Math.round(Rand * Range));
+                    }
+                    var item= GetRandomNum(1, 10);
+                    return "/content/imager/views/"+item+".jpg";
+                }
+
+            }
+
+            var _view = {
+
+                clientheight: null,
+
+                countheight:null,
+
+                start: function () {
+                    var that = this;
+                    var model = app.ext.views.model;
+                    that.clientheight=$(".page").height();
+                    that.countheight=$(".panels").height();
+                    $(".page").scroll(that.scroll);
+                    var datas = model.getdata(10);
+                    that.loaddata(datas);
+                },
+
+                scroll:function(){
+                    var that = app.ext.views.view;
+                    var model = app.ext.views.model;
+                    if (that.check()) {
+                        var datas = model.getdata(10);
+                        that.loaddata(datas);
+                    }
+                },
+
+                loaddata: function (data) {
+                    for (var i = 0; i < data.length; i++) {
+                        var item=data[i];
+                        var elm=$.create("div", {
+                            className: "box",
+                            html: '<img class="photo" src="' + item.path + '" />' +
+                                '<div class="content">' + item.content + '</div>' +                 
+                                '<div class="own">' + item.own + '</div>'+
+                                '<div class="client"><img src="http://www.iconpng.com/png/in-the-hospital/eye112.png"/><span>' + 99 + '+</span></div>',
+                        }).data(item).click(function () {
+                            var data = $(this).data();
+                            alert(data.id);
+                        });
+                        var lboxs = $(".boxs").eq(0);
+                        var rboxs = $(".boxs").eq(1);
+                        //console.log("Left:" + lboxs.height() + ",Right:" + rboxs.height());
+
+                        
+                        var l_lastbox = lboxs.children(".box:last");
+                        var r_lastbox = rboxs.children(".box:last");
+                        var l_x = (l_lastbox.length > 0) ? l_lastbox.offset().top + l_lastbox.height() : 0;
+                        var r_x = (r_lastbox.length > 0) ? r_lastbox.offset().top + r_lastbox.height() : 0;
+                        
+                        //会出现bug，当图片没加载时,显示不出效果
+
+                        if (l_x > r_x) {
+                            rboxs.append(elm);
+                        } else {
+                            lboxs.append(elm);
+                        }
+
+                        //if (lboxs.children().length > rboxs.children().length) {
+                        //    rboxs.append(elm);
+                        //} else {
+                        //    lboxs.append(elm);
+                        //}
+
+                    }
+                    
+                },
+
+                check: function () {
+                    var that = this;
+                    that.clientheight = $(".page").height();
+                    that.countheight = $(".panels").height();
+                    var scrolltop = $(".page").scrollTop();
+                    return (that.countheight - (scrolltop + that.clientheight)) < 50;
+                }
+
+            }
+
+
+            var views = _controller;
+            views.model = _model;
+            views.view = _view;
+
+
+            $.extend(true, app.ext.views, app._controller, views);
+        });
+
+    </script>
+</body>
+</html>

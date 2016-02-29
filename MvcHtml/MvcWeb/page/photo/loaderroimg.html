@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>MvcHtml</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, minimal-ui">
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <link href="/content/css/index.css" rel="stylesheet" />
+    <style>
+        /*img {
+            background-image: url(/content/imager/load.jpg);
+            background-position:center;
+            background-size:auto;
+            width:100%;
+            height:300px;
+        }*/
+    </style>
+</head>
+<body>
+    <img src="http://zibr.cn/media/image/logo-108.png" />
+    <script src="/lib/jquery-1.11.3.min.js"></script>
+    <script src="/content/js/jqueryext.js"></script>
+    <script src="/content/js/index.js"></script>
+    <script>
+        //$(window).load(function () {
+        //    $('img').each(function () {
+        //        if (!this.complete || typeof this.naturalWidth == "undefined" || this.naturalWidth == 0) {
+        //            this.src = '/content/imager/load.jpg';
+        //        }
+        //    });
+        //});
+        app.ready(function () {
+        $("img").one('load', function () {
+            if (!this.complete || typeof this.naturalWidth == "undefined" || this.naturalWidth == 0) {
+                this.src = '/content/imager/load.jpg';
+            } else {
+                alert(this.src);
+            }
+        }).error(function(){
+        
+        }).each(function () {
+            //if (this.complete) { $(this).load() };
+            $(this).load()
+        });
+        //    $("img").bind("onload",function () {
+        //        var src = $(this).attr("src");
+        //        $(this).attr('/content/imager/load.jpg');
+        //    });
+        //});
+        
+    </script>
+</body>
+</html>

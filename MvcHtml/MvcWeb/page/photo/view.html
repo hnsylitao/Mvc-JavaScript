@@ -1,0 +1,122 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>MvcHtml</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, minimal-ui">
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <link href="/content/css/index.css" rel="stylesheet" />
+    <!-- Core CSS file -->
+    <link href="/content/photoswipe/dist/photoswipe.css" rel="stylesheet">
+    <!-- UI CSS file -->
+    <link href="/content/photoswipe/dist/default-skin/default-skin.css" rel="stylesheet">
+</head>
+<body>
+    <a id="btn">预览图片</a>
+    <div id="photoswipe">
+        <!-- Root element of PhotoSwipe. Must have class pswp. -->
+        <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+            <!-- pswp背景 -->
+            <div class="pswp__bg"></div>
+
+            <!-- 内容 -->
+            <div class="pswp__scroll-wrap">
+
+                <!-- 最大支持多少显示元素 节省内存. -->
+                <div class="pswp__container">
+                    <div class="pswp__item"></div>
+                    <div class="pswp__item"></div>
+                    <div class="pswp__item"></div>
+                </div>
+
+                <!-- 默认样式 -->
+                <div class="pswp__ui pswp__ui--hidden">
+
+                    <div class="pswp__top-bar">
+
+                        <!-- 当前显示index 不可删除 style 隐藏 -->
+                        <div class="pswp__counter" style="display:none"></div>
+                        <div class="pswp__contenttitle">图片预览</div>
+
+                        <button class="pswp__button pswp__button--close" title="关闭"></button>
+
+                        <!--<button class="pswp__button pswp__button--share" title="分享"></button>-->
+
+                        <!--<button class="pswp__button pswp__button--fs" title="全屏"></button>-->
+
+                        <button class="pswp__button pswp__button--zoom" title="放大/缩小"></button>
+
+                        <!-- 预加载 loader -->
+                        <div class="pswp__preloader">
+                            <div class="pswp__preloader__icn">
+                                <div class="pswp__preloader__cut">
+                                    <div class="pswp__preloader__donut"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                        <div class="pswp__share-tooltip"></div>
+                    </div>
+
+                    <button class="pswp__button pswp__button--arrow--left" title="上一个"></button>
+
+                    <button class="pswp__button pswp__button--arrow--right" title="下一个"></button>
+
+                    <div class="pswp__caption">
+                        <div class="pswp__caption__center"></div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+    <script src="/lib/jquery-1.11.3.min.js"></script>
+    <script src="/content/js/jqueryext.js"></script>
+    <script src="/content/js/index.js"></script>
+    <!-- Core JS file -->
+    <script src="/content/photoswipe/dist/photoswipe.min.js"></script>
+    <!-- UI JS file -->
+    <script src="/content/photoswipe/dist/photoswipe-ui-default.min.js"></script> 
+    <script>
+        app.ready(function () {
+            $("#btn").click(function () {
+                var that = $(this);
+                var openPhotoSwipe = function () {
+                    var pswpElement = $("#photoswipe .pswp").get(0);
+                    
+                    // build items array
+                    var items = [
+                        {
+                            src: 'http://s.cn.bing.net/az/hprichbg/rb/HSMountainMist_ZH-CN9530091055_1920x1080.jpg',
+                            w: 1920,
+                            h: 1080
+                        }
+                    ];
+
+                    // define options (if needed)
+                    var options = {
+                        // history & focus options are disabled on CodePen        
+                        history: false,//历史记录
+                        focus: false,
+
+                        showAnimationDuration: 300,
+                        hideAnimationDuration: 300
+                    };
+
+                    var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, options);
+                    gallery.init();
+                    $("#photoswipe .pswp").click(function () {
+                        gallery.close();
+                    })
+                    
+                };
+                openPhotoSwipe();
+            });
+        });
+    </script>
+</body>
+</html>
